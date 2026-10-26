@@ -1,0 +1,88 @@
+# Ablation matrix from the paper framework (section 6.3)
+ablations:
+  B0_chen_rf:
+    phenology: static
+    modalities: [optical, thermal, climate]
+    model: chen_rf
+    conformal: false
+    trade: false
+  B1_dynamic_rf:
+    phenology: dynamic
+    modalities: [optical, thermal, climate]
+    model: chen_rf
+    conformal: false
+    trade: false
+  B2_optical_climate:
+    phenology: dynamic
+    modalities: [optical, thermal, climate]
+    model: xgb
+    conformal: false
+    trade: false
+  B3_plus_sm:
+    phenology: dynamic
+    modalities: [optical, thermal, climate, sm]
+    model: xgb
+    conformal: false
+    trade: false
+  B4_plus_sif:
+    phenology: dynamic
+    modalities: [optical, thermal, climate, sm, sif]
+    model: xgb
+    conformal: false
+    trade: false
+  B5_plus_vod:
+    phenology: dynamic
+    modalities: [optical, thermal, climate, sm, vod]
+    model: xgb
+    conformal: false
+    trade: false
+  P_full_physiology:
+    phenology: dynamic
+    modalities: [optical, thermal, climate, sm, sif, vod]
+    model: xgb
+    conformal: true
+    trade: false
+  C0_climatology:
+    phenology: dynamic
+    modalities: [optical]
+    model: climatology
+    conformal: false
+    trade: false
+  C1_climate:
+    phenology: dynamic
+    modalities: [climate]
+    model: xgb
+    conformal: false
+    trade: false
+  C2_optical:
+    phenology: dynamic
+    modalities: [optical]
+    model: xgb
+    conformal: false
+    trade: false
+  C3_climate_optical:
+    phenology: dynamic
+    modalities: [optical, thermal, climate]
+    model: xgb
+    conformal: false
+    trade: false
+  C4_climate_optical_sif:
+    phenology: dynamic
+    modalities: [optical, thermal, climate, sif]
+    model: xgb
+    conformal: false
+    trade: false
+  P_food_system:
+    phenology: dynamic
+    modalities: [optical, thermal, climate, sm, sif, vod]
+    model: xgb
+    conformal: true
+    trade: true
+
+robustness:
+  - drop_country_id
+  - alternate_detrend
+  - crop_mask_spam_vs_cropgrids
+  - gosif_vs_independent_sif
+  - vod_rice_excluded
+  - oracle_vs_realtime_phenology

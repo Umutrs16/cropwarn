@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cropwarn"
+version = "0.1.0"
+description = "Dynamic phenology and multimodal satellite physiology for trustworthy early warning of global crop production shocks."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "NatureFood crop early-warning project" }]
+license = { text = "MIT" }
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "scikit-learn>=1.3",
+  "xgboost>=2.0",
+  "scipy>=1.11",
+  "pyyaml>=6.0",
+  "matplotlib>=3.8",
+  "requests>=2.31",
+  "tqdm>=4.66",
+  "joblib>=1.3",
+]
+
+[project.optional-dependencies]
+full = [
+  "lightgbm>=4.0",
+  "shap>=0.44",
+  "torch>=2.1",
+  "earthengine-api>=0.1.384",
+  "geopandas>=0.14",
+  "xarray>=2023.1",
+  "rasterio>=1.3",
+]
+dev = ["pytest>=7.4", "ruff>=0.4"]
+
+[project.scripts]
+cropwarn = "cropwarn.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"

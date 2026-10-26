@@ -1,0 +1,95 @@
+project:
+  name: cropwarn
+  title: Dynamic crop phenology and multimodal satellite physiology
+  random_seed: 42
+  output_root: .
+
+study:
+  crops: [wheat, rice, maize, soybean]
+  year_start: 2001
+  year_end: 2024
+  # SMAP / L-band VOD sub-experiment starts here
+  physiology_subperiod_start: 2015
+  leads_days: [192, 160, 128, 96, 64, 48, 32, 16, 0]
+  demo_leads_days: [192, 160, 128, 96, 64, 32, 0]
+  # FAO rice is a multi-season annual total. India kharif/Aman was dropped
+  # (canopy ≠ APY). China NBS provincial early rice (90–195) does couple to
+  # RS (harvest R²≈0.61) but B4 adds no lead beyond optical. US NASS county
+  # maize (2012 belt) couples in-sample (July SIF r≈0.39) but rolling-origin
+  # harvest R² is negative at both county and CROPGRIDS-weighted state
+  # scales. Eurostat NUTS maize (2003/2018/2022) has harvest R²≈0.07 and
+  # no earliest_lead, so maize stays out of the headline sample.
+  headline_crops: [wheat, soybean]
+  phenology_windows: [[0, 20], [20, 40], [40, 60], [60, 80], [80, 100]]
+  targets: [yield_level, yield_anomaly, production]
+  primary_target: yield_anomaly
+
+paths:
+  data_raw: data_raw
+  data_interim: data_interim
+  features: features
+  models: models/fitted
+  results: results
+  figures: figures
+  gee_scripts: gee
+
+validation:
+  schemes:
+    - rolling_origin
+    - leave_one_year_out
+    - leave_one_region_out
+    - shock_holdout
+  rolling_test_start: 2016
+  min_train_years: 8
+  conformal_alpha: 0.10
+  ood_reject_quantile: 0.90
+  catastrophic_rel_error: 0.30
+
+clusters:
+  n_clusters: 6
+  method: kmeans
+
+models:
+  rf:
+    n_estimators: 400
+    min_samples_leaf: 5
+    max_features: sqrt
+    demo_n_estimators: 120
+  xgb:
+    n_estimators: 400
+    max_depth: 5
+    learning_rate: 0.05
+    subsample: 0.8
+    colsample_bytree: 0.8
+    demo_n_estimators: 120
+  temporal:
+    hidden: 64
+    dropout: 0.15
+    epochs: 40
+    demo_epochs: 12
+
+area:
+  mc_draws: 500
+  yield_cv: 0.08
+  area_cv: 0.06
+
+trade:
+  network_lag_years: 1
+  high_exposure_quantile: 0.80
+
+shocks:
+  - {year: 2003, name: europe_heatwave, regions: [Europe], crops: [wheat, maize]}
+  - {year: 2010, name: russia_heat_drought, regions: [Europe, CentralAsia], crops: [wheat]}
+  - {year: 2012, name: us_drought, regions: [NorthAmerica], crops: [maize, soybean]}
+  - {year: 2015, name: el_nino, regions: [SoutheastAsia, SouthAmerica, Africa], crops: [rice, maize, soybean]}
+  - {year: 2016, name: el_nino_lag, regions: [SoutheastAsia, SouthAmerica, Africa], crops: [rice, maize]}
+  - {year: 2019, name: australia_fires, regions: [Oceania], crops: [wheat]}
+  - {year: 2020, name: covid_disruption, regions: [Global], crops: [wheat, rice, maize, soybean]}
+  - {year: 2022, name: ukraine_war_europe_drought, regions: [Europe, CentralAsia], crops: [wheat, maize]}
+
+go_nogo:
+  phenology_lowlat_r2_gain: 0.03
+  physiology_lead_days: 14
+  coverage_tolerance: 0.08
+  trade_lead_gain_days: 16
+  min_external_regions: 2

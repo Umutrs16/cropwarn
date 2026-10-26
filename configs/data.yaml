@@ -1,0 +1,49 @@
+faostat:
+  data_api: https://fenixservices.fao.org/faostat/api/v1/en/data
+  bulk_catalog: https://bulks-faostat.fao.org/production/datasets_E.json
+  production_domain: QCL
+  trade_domain: TM
+  elements:
+    yield: 5419          # hg/ha in FAOSTAT; converted to t/ha
+    production: 5510     # tonnes
+    area_harvested: 5312 # ha
+  items:
+    wheat: 15
+    rice: 27
+    maize: 56
+    soybean: 236
+
+gee_assets:
+  mod13q1: MODIS/061/MOD13Q1
+  mcd15a3h: MODIS/061/MCD15A3H
+  mod11a2: MODIS/061/MOD11A2
+  mcd12q2: MODIS/061/MCD12Q2
+  era5_land: ECMWF/ERA5_LAND/DAILY_AGGR
+  smap_l4: NASA/SMAP/SPL4SMGP/008
+  chirps: UCSB-CHG/CHIRPS/DAILY
+  s1: COPERNICUS/S1_GRD
+  s2: COPERNICUS/S2_SR_HARMONIZED
+  dynamic_world: GOOGLE/DYNAMICWORLD/V1
+  worldcereal_models: ESA/WorldCereal/2021/MODELS/v100
+  worldcereal_aez: ESA/WorldCereal/AEZ/v100
+  worldcereal_markers: ESA/WorldCereal/2021/MARKERS/v100
+  alphaearth: GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL
+
+external:
+  gosif: https://globalecology.unh.edu/data/GOSIF.html
+  vodca: https://researchdata.tuwien.ac.at/records/t74ty-tcx62
+  cropgrids: https://doi.org/10.1038/s41597-024-03247-7
+  mirca_os: https://doi.org/10.1038/s41597-024-04313-w
+  african_crop_calendar: https://doi.org/10.1038/s41597-026-07906-9
+  grow_africa: https://doi.org/10.1038/s41597-025-05257-5
+  baci: https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37
+  chen_code: https://github.com/yz-wang99/global-crop-yield-code
+
+leakage_rules:
+  - Rolling trend for year t uses only years <= t-1.
+  - Standardization, PCA, feature selection and conformal calibration are fold-internal.
+  - Early-forecast phenology never uses post-cutoff observations to set EOS.
+  - Trade weights use the previous complete trade year only.
+  - AlphaEarth annual embeddings are lagged by one year or excluded from early warning.
+  - WorldCereal 2021 maps are not copied to all years as truth.
+  - GlobalCropYield5min is never used as an independent label.
